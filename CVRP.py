@@ -1,0 +1,110 @@
+import numpy as np
+from dimod import ConstrainedQuadraticModel, Binary
+from dimod import quicksum
+from dwave.system import LeapHybridCQMSampler
+
+import time
+
+#from shapely.geometry import Point
+import random
+import cvrplib
+
+instance, solution = cvrplib.download('A-n32-k5',solution=True)
+n=instance.dimension
+strp=instance.name.partition("k")[2]
+p=int(strp)#Number of trucks
+
+distances=instance.distances
+
+c=np.zeros((n,n))
+for i in range(0,n):
+    for j in range(0,n):
+        c[i][j]=distances[i][j]
+        
+V=int(n*(n-1)*p)
+D=instance.demands
+Q=instance.capacity
+
+x=[[[Binary(f'x_{r}_{i}_{j}') for j in range(n)] for i in range(n)] for r in range(p)]
+
+cqm= ConstrainedQuadraticModel()
+
+cqm.set_objective(quicksum(c[i][j]*x[r][i][j] for r in range(p) for i in range(n) for j in range(n) if(j!=i)))
+
+for j in range(1,n):
+    cqm.add_constraint(quicksum(x[r][i][j] for r in range(p) for i in range(n) if i!=j)==1, label=f'Eq2_{j}')
+
+for r in range(p):
+    cqm.add_constraint(quicksum(x[r][0][j] for j in range(1,n))==1, label=f'Eqn3_{r}')
+
+for j in range(n):
+    for r in range(p):
+        cqm.add_constraint(quicksum(x[r][i][j] for i in range(n) if i!=j)-quicksum(x[r][j][i] for i in range(n) if i!=j)==0,label=f'Eq4_{j}_{r}')
+
+for r in range(p):
+    cqm.add_constraint(quicksum(D[j]*x[r][i][j] for i in range(n) for j in range(1,n) if j!=i)<=Q,label=f'Eqn5_{r}')
+
+import dimod
+B=2*n
+
+T_max=max(2*n-p+1,1)
+
+t=[[None]*(p) for _ in range(n)]
+
+for i in range(n):
+    for r in range(p):
+        t[i][r]=dimod.Integer(lower_bound=1,upper_bound=T_max,label=f't.{i}.{r}')
+
+for i in range(1,n):
+    for j in range(1,n):
+        if i!=j:
+            for k in range(p):
+                cqm.add_constraint((t[j][k]-(t[i][k]+1)+B*(1-x[k][i][j]))>=0)
+
+def get_token():
+    return 'DEV-ad327c1fec4c7793764df612eaa1910b4a1f910e'
+
+
+print("Starting D wave")
+startime=time.time()
+sampler=LeapHybridCQMSampler(token=get_token())
+sampleset = sampler.sample_cqm(cqm,time_limit=150,label='CVRP')
+feasible_sampleset=sampleset.filter(lambda row:row.is_feasible)
+end_time=time.time()
+try:
+    best_solution=feasible_sampleset.first.sample
+except:
+    print("No feasible solution found")
+    exit()
+
+print("\n Total execution time for "+str(n)+" nodes "+str(p)+" vehicles "+"takes : "+str(end_time-startime)+"seconds\n")
+
+truck_stops=[]
+routes=[[] for _ in range(p)]
+for key,val in best_solution.items():
+    if val==1.0:
+        if "x_" in key:
+            truck_stops.append(key.split('_')[1:])
+            routes[int(truck_stops[-1][0])].append(truck_stops[-1][1:])
+
+total_cost=0
+for i in range(p):
+    current_route=routes[i]
+    current_cost=0
+    for r in current_route:
+        current_cost+=c[int(r[0])][int(r[1])]
+    print("\nTruck",i,"route:")
+    for r in current_route:
+        print(r)
+    print("\nTruck",i,"cost:",current_cost)
+    total_cost+=current_cost
+
+print("\nTotal cost:\t",total_cost)
+
+print("\nClassical Solution Route\t",solution.routes)
+print("\nClassical Solution Total cost:\t",solution.cost)
+
+
+#print("\n ",instance.name,"\n ")
+#print("\n ",strp,"\n ")
+#print(solution)
