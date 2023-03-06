@@ -59,19 +59,19 @@ for r in range(p):
 import dimod
 B=2*n
 
-# T_max=max(2*n-p+1,1)
+T_max=max(2*n-p+1,1)
 
-# t=[[None]*(p) for _ in range(n)]
+t=[[None]*(p) for _ in range(n)]
 
-# for i in range(n):
-#     for r in range(p):
-#         t[i][r]=dimod.Integer(lower_bound=1,upper_bound=T_max,label=f't.{i}.{r}')
+for i in range(n):
+    for r in range(p):
+        t[i][r]=dimod.Integer(lower_bound=1,upper_bound=T_max,label=f't.{i}.{r}')
 
-# for i in range(1,n):
-#     for j in range(1,n):
-#         if i!=j:
-#             for k in range(p):
-#                 cqm.add_constraint((t[j][k]-(t[i][k]+1)+B*(1-x[k][i][j]))>=0)
+for i in range(1,n):
+    for j in range(1,n):
+        if i!=j:
+            for k in range(p):
+                cqm.add_constraint((t[j][k]-(t[i][k]+1)+B*(1-x[k][i][j]))>=0)
 
 def get_token():
     return 'DEV-84bd4a159c19999c61d45bf77755d8a37754ba12'
@@ -126,7 +126,7 @@ nx.draw(G, nx.get_node_attributes(G, 'pos'), with_labels=True, node_size=10)
 
 for l in range(len(paths)):
     k = G.subgraph(paths[l])
-    nx.draw_networkx(k, nx.get_node_attributes(G, 'pos'), with_labels=True, edge_color=colors[l])
+    nx.draw_networkx(k, nx.get_node_attributes(G, 'pos'), with_labels=True, edge_color=colors[l], node_color=colors[l])
 plt.savefig("solution", bbox_inches=None)
 
 print("\nTotal cost:\t",total_cost)
