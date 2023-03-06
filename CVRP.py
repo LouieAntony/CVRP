@@ -17,6 +17,7 @@ def edge_gen(list):
     edge_list = []
     for i in range(len(list)-1):
         edge_list.append((list[i],list[i+1]))
+    edge_list.append((list[-1],'0'))
     return edge_list
 
 colors = [ "#58FF33", "#CD6155", "#DAF7A6", "#FFC300", "#A569BD", "#5499C7", "#45B39D", "#6E2C00", "#FF33D1", "#FFFFFF", "#000000", "#33FFAF", "#33FFE0", "#FF3333"]
