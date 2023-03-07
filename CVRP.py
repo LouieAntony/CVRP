@@ -12,12 +12,11 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def edge_gen(list):
-    edge_list = []
-    for i in range(len(list)-1):
-        edge_list.append((list[i],list[i+1]))
-    edge_list.append((list[-1],'0'))
-    return edge_list
+def get_sub_nodes(lis):
+    i = lis[0]
+    for t in lis[1:]:
+        i+=t
+    return list(i)
 
 colors = [ "#58FF33", "#CD6155", "#DAF7A6", "#FFC300", "#A569BD", "#5499C7", "#45B39D", "#6E2C00", "#FF33D1", "#FFFFFF", "#000000", "#33FFAF", "#33FFE0", "#FF3333"]
 
@@ -112,8 +111,10 @@ for r in range(p):
 
 
 
+# print(t)
+
 def get_token():
-    return 'DEV-84bd4a159c19999c61d45bf77755d8a37754ba12'
+    return 'DEV-c413dd10019812eba489844722103c0f09271133'
 
 
 
@@ -151,7 +152,7 @@ for i in range(p):
     print("\nTruck",i,"route:")
     for r in current_route:
         print(r)
-        temp.append(r[0])
+        temp.append(tuple(r))
     print("\nTruck",i,"cost:",current_cost)
     total_cost+=current_cost
     paths.append(temp)
@@ -160,12 +161,12 @@ G = nx.Graph()
 for i in range(len(instance.coordinates)):
     G.add_node(str(i),pos=tuple(instance.coordinates[i]))
 for l in paths:
-    G.add_edges_from(edge_gen(l))
+    G.add_edges_from(l)
 
 nx.draw(G, nx.get_node_attributes(G, 'pos'), with_labels=True, node_size=10)
 
 for l in range(len(paths)):
-    k = G.subgraph(paths[l])
+    k = G.subgraph(get_sub_nodes(paths[l]))
     nx.draw_networkx(k, nx.get_node_attributes(G, 'pos'), with_labels=True, edge_color=colors[l], node_color=colors[l])
 plt.savefig("solution", bbox_inches=None)
 
@@ -173,3 +174,4 @@ print("\nTotal cost:\t",total_cost)
 
 print("\nClassical Solution Route\t",solution.routes)
 print("\nClassical Solution Total cost:\t",solution.cost)
+
