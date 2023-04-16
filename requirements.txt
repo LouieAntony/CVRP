@@ -1,0 +1,15 @@
+cvrplib==0.1.2
+dimod==0.12.3
+dwave_cloud_client==0.10.4
+dwave_drivers==0.4.4
+dwave_gate==0.1.0
+dwave_inspector==0.4.1
+dwave_inspectorapp==0.3.1
+dwave_preprocessing==0.5.4
+dwave_samplers==1.0.0
+dwave_system==1.18.0
+matplotlib==3.6.3
+networkx==2.8.8
+numpy==1.24.1
+python-dotenv==1.0.0
+scikit_fuzzy==0.4.2
