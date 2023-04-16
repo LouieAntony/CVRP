@@ -117,7 +117,7 @@ def TSP(node_list):
     # print(t)
 
     def get_token():
-        return 'DEV-aebcf2c04ae04915bed9daec214aa5e7525731b4'
+        return 'DEV-adbfc9b57e1c217a9653d805d1ac090a178ae2ad'
 
 
 
@@ -146,6 +146,9 @@ def TSP(node_list):
     paths = []
 
     total_cost=0
+
+    for_graph = []
+
     for i in range(p):
         current_route=routes[i]
         current_cost=0
@@ -159,6 +162,7 @@ def TSP(node_list):
             t.append(node_list[int(r[0])]) 
             t.append(node_list[int(r[1])])
             print(t)
+            for_graph.append(t)
             temp.append(tuple(r))
         print("\nTruck",i,"cost:",current_cost)
         total_cost+=current_cost
@@ -181,4 +185,4 @@ def TSP(node_list):
 
     print("\nClassical Solution Route\t",solution.routes)
     print("\nClassical Solution Total cost:\t",solution.cost)
-    return total_cost
+    return (total_cost,for_graph)

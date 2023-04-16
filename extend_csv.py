@@ -2,11 +2,11 @@ import csv
 import pandas as pd
 
 def prepare_tsp_input(dictionary):
-    nodes = {}
+    nodes = []
     for i in dictionary.values():
         n = i.get("nodes")
         n.insert(0,0)
-        nodes[i.get("capacity")] = n
+        nodes.append((i.get("capacity"),n))
     
     return nodes
 
@@ -14,8 +14,8 @@ def make_csv(data):
     with open('edges.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         clusters = prepare_tsp_input(data)
-        for key, value in clusters.items():
-            row = (key, ','.join(str(x) for x in value))
+        for cl in clusters:
+            row = (cl[0], ','.join(str(x) for x in cl[1]))
             writer.writerow(row)
 
 def read_csv(file_name):
