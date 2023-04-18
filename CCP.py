@@ -1,4 +1,5 @@
 import json
+import os
 
 import numpy as np
 import math
@@ -6,8 +7,13 @@ import matplotlib.pyplot as plt
 import cvrplib
 
 import skfuzzy as fuzz
+from dotenv import load_dotenv
 
-instance, solution = cvrplib.download('A-n32-k5',solution=True)
+load_dotenv()
+
+dataset = os.getenv('DATASET')
+
+instance, solution = cvrplib.download(dataset,solution=True)
 distances = [distance for distance in instance.distances]
 trucks = instance.name.partition("k")[2]
 

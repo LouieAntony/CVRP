@@ -27,7 +27,7 @@ def get_sub_nodes(lis):
 load_dotenv()
 
 CVRP_TOKEN = os.getenv('CVRP_TOKEN')
-
+dataset = os.getenv('DATASET')
 
 colors = [ "#58FF33", "#CD6155", "#DAF7A6", "#FFC300", "#A569BD", "#5499C7", "#45B39D", "#6E2C00", "#FF33D1", "#FFFFFF", "#000000", "#33FFAF", "#33FFE0", "#FF3333"]
 
@@ -36,7 +36,7 @@ ccp_output = open("./csv_files/ccp_output.csv",)
 input = json.load(ccp_output)
 
 
-cvrp_instance, solution = cvrplib.download('A-n32-k5',solution=True)
+cvrp_instance, solution = cvrplib.download(dataset,solution=True)
 
 instance = ret_instance(input,cvrp_instance)
 

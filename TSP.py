@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 load_dotenv()
 
 TSP_TOKEN = os.getenv('TSP_TOKEN')
+dataset = os.getenv('DATASET')
 
 
 colors = [ "#58FF33", "#CD6155", "#DAF7A6", "#FFC300", "#A569BD", "#5499C7", "#45B39D", "#6E2C00", "#FF33D1", "#FFFFFF", "#000000", "#33FFAF", "#33FFE0", "#FF3333"]
@@ -30,10 +31,10 @@ with open(csv_filename) as f:
     centroid_paths = list(line for line in reader)
 node_list = [list(map(int, lst)) for lst in centroid_paths]
 
-instance, solution = cvrplib.download('A-n32-k5',solution=True)
+instance, solution = cvrplib.download(dataset,solution=True)
 
 def TSP(node_list):
-    instance, solution = cvrplib.download('A-n32-k5',solution=True)
+    instance, solution = cvrplib.download(dataset,solution=True)
     n=len(node_list)
     # strp=instance.name.partition("k")[2]
     p=1#Number of trucks
