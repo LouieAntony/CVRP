@@ -11,7 +11,7 @@ def prepare_tsp_input(dictionary):
     return nodes
 
 def make_csv(data):
-    with open('edges.csv', 'w', newline='') as file:
+    with open('./csv_files/edges.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         clusters = prepare_tsp_input(data)
         for cl in clusters:
@@ -19,7 +19,7 @@ def make_csv(data):
             writer.writerow(row)
 
 def read_csv(file_name):
-    csv_filename = file_name
+    csv_filename = f'./csv_files/{file_name}'
     with open(csv_filename) as f:
         reader = csv.reader(f)
         lst = list(line for line in reader)

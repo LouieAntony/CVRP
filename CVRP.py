@@ -4,9 +4,13 @@ from dimod import quicksum
 from dwave.system import LeapHybridCQMSampler
 from itertools import chain, combinations
 
+import os
 import time
 import random
-import cvrplib
+import vrplib
+
+import os
+from dotenv import load_dotenv
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -22,12 +26,15 @@ colors = [ "#58FF33", "#CD6155", "#DAF7A6", "#FFC300", "#A569BD", "#5499C7", "#4
 
 def TSP(node_list):
 
-
-    instance, solution = cvrplib.download('A-n32-k5',solution=True)
+    load_dotenv()
+    instance_size = os.getenv('INST_SIZE')
+    api_token = os.getenv('TOKEN')
+    instance = vrplib.read_instance(f"./data_instances/{instance_size}.vrp")
+    solution = vrplib.read_solution(f"./solution_instances/{instance_size}.sol")
     n=len(node_list)
-    strp=instance.name.partition("k")[2]
+    strp=instance.get('name').partition("k")[2]
     p=1#Number of trucks
-    distances=instance.distances
+    distances=instance.get('edge_weight').tolist()
 
     node_list = np.array(node_list)
 
@@ -52,8 +59,8 @@ def TSP(node_list):
             c[i][j]=distances[node_list[i]][node_list[j]]
             
     V=int(n*(n-1)*p)
-    D=instance.demands
-    Q=instance.capacity
+    D=instance.get('demand').tolist()
+    Q=instance.get('capacity')
 
     x = np.array([[[Binary(f'x_{r}_{i}_{j}') for j in range(n)] for i in range(n)] for r in range(p)])
 
@@ -117,7 +124,7 @@ def TSP(node_list):
     # print(t)
 
     def get_token():
-        return 'DEV-adbfc9b57e1c217a9653d805d1ac090a178ae2ad'
+        return api_token
 
 
 
@@ -168,21 +175,9 @@ def TSP(node_list):
         total_cost+=current_cost
         paths.append(temp)
 
-    G = nx.Graph()
-    for i in range(len(instance.coordinates)):
-        G.add_node(str(i),pos=tuple(instance.coordinates[i]))
-    for l in paths:
-        G.add_edges_from(l)
-
-    nx.draw(G, nx.get_node_attributes(G, 'pos'), with_labels=True, node_size=10)
-
-    for l in range(len(paths)):
-        k = G.subgraph(get_sub_nodes(paths[l]))
-        nx.draw_networkx(k, nx.get_node_attributes(G, 'pos'), with_labels=True, edge_color=colors[l], node_color=colors[l])
-    plt.savefig("solution", bbox_inches=None)
 
     print("\nTotal cost:\t",total_cost)
 
-    print("\nClassical Solution Route\t",solution.routes)
-    print("\nClassical Solution Total cost:\t",solution.cost)
+    print("\nClassical Solution Route\t",solution.get('routes'))
+    print("\nClassical Solution Total cost:\t",solution.get('cost'))
     return (total_cost,for_graph)

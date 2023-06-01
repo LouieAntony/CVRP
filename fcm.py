@@ -1,18 +1,33 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import cvrplib
-
+import vrplib
+import os
 import skfuzzy as fuzz
+import shutil
+from scipy.spatial import distance_matrix
+from dotenv import load_dotenv
 
-instance, solution = cvrplib.download('A-n32-k5',solution=True)
-distances = [distance for distance in instance.distances]
-trucks = instance.name.partition("k")[2]
+load_dotenv()
+
+from extend_csv import *
+
+instance_size = os.getenv('INST_SIZE')
+
+os.mkdir('./data_instances')
+os.mkdir('./solution_instances')
+
+vrplib.download_instance(f'{instance_size}','./data_instances')
+vrplib.download_solution(f'{instance_size}','./solution_instances')
+instance = vrplib.read_instance(f"./data_instances/{instance_size}.vrp")
+solution = vrplib.read_solution(f"./solution_instances/{instance_size}.sol")
+trucks = instance.get('name').partition("k")[2]
 
 # Set the maximum sum of cluster points
-capacity = instance.capacity
-coords_original = [coordinates for coordinates in instance.coordinates]
-depot = instance.coordinates[0]
-demands = [demand for demand in instance.demands]
+capacity = instance.get('capacity')
+coords_original = [coordinates for coordinates in instance.get('node_coord')]
+depot = instance.get('node_coord')[0]
+demands = instance.get('demand').tolist()
+distances = instance.get('edge_weight').tolist()
 
 # Define the number of clusters
 n_clusters = int(trucks)
@@ -113,4 +128,6 @@ def node_assign(preferences):
 
   return cluster_assignment
 
-print(node_assign(preferences))
+fcm_output = node_assign(preferences)
+print(fcm_output)
+make_csv(fcm_output)
