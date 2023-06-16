@@ -44,7 +44,7 @@ The packages that need to be installed are
 ## How to use?
 ### CCP.py
 This is the clustering code. The code makes k clusters where k is twice the number of trucks. This output is stored in a csv file "ccp_output.csv" which will be saved in csv_files folder.
-We have taken twice the number of trucks as when employed elbow method to find out optimal number of clusters, we have found that twice the number of clusters have provided better results comparatively.
+We have taken twice the number of trucks as, when employed elbow method to find out optimal number of clusters, we have found that twice the number of clusters have provided better results comparatively.
 
 ### CVRP.py
 Here the cluster centroids obtained previously (CCP.py) treated as compressed customer nodes and are clustered. The number of clusters taken here will be equal to the number of trucks so that each truck will be assiged with each of these clusters of compressed nodes. The output obtained here is stored in "cluster_centroid_map.csv".
