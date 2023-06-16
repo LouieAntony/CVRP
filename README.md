@@ -3,7 +3,7 @@ In this study, we propose and compare the performance of two approaches to solve
 * Hybrid Two Step : FCM (Base clustering) + TSP (Quantum Annealing)
 * Hybrid Three Step : FCM (Base clustering) + CVRP + TSP (Quantum Annealing)
 
-This program is about the Hybrid Two Step approach (FCM (Base clustering) + TSP (Quantum Annealing))
+This program is for the Hybrid Two Step approach (FCM (Base clustering) + TSP (Quantum Annealing))
 
 ## What is Quantum COmputing
 Quantum Computing new paradigm of computing that promises near infinite parallelisation. It is a type of computing that uses quantum mechanics to perform calculations. In a quantum computer, the basic unit of information is the quantum bit, or qubit. 
