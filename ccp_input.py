@@ -1,5 +1,5 @@
 import math
-import cvrplib
+import vrplib
 
 class objectview(object):
     def __init__(self, d):
@@ -16,7 +16,7 @@ def find_dist_mat(x, y):
     return math.sqrt(abscissa + ordinate)
 
 def get_coord(data, data_instance):
-    coords = data_instance.coordinates
+    coords = data_instance.get('node_coord')
     coordinates = []
     coordinates.append(coords[0])
     for i in data.values():
@@ -39,7 +39,7 @@ def ret_instance(input, data_instance):
         "n_customers": len(input),
         "depot": 0,
         "customers": [i for i in range(1,len(input)+1)],
-        "capacity": data_instance.capacity,
+        "capacity": data_instance.get('capacity'),
         "distances": [[find_dist_mat(x,y) for x in coordinates] for y in coordinates],
         "demands": get_demands(input),
         "coordinates": coordinates, 

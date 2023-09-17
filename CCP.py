@@ -4,24 +4,34 @@ import os
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-import cvrplib
+import vrplib
 
 import skfuzzy as fuzz
 from dotenv import load_dotenv
 
 load_dotenv()
 
-dataset = os.getenv('DATASET')
+# dataset = os.getenv('DATASET')
 
-instance, solution = cvrplib.download(dataset,solution=True)
-distances = [distance for distance in instance.distances]
-trucks = instance.name.partition("k")[2]
+instance_size = os.getenv('INST_SIZE')
+
+os.mkdir('./data_instances')
+os.mkdir('./solution_instances')
+
+vrplib.download_instance(f'{instance_size}','./data_instances')
+vrplib.download_solution(f'{instance_size}','./solution_instances')
+
+instance = vrplib.read_instance(f"./data_instances/{instance_size}.vrp")
+solution = vrplib.read_solution(f"./solution_instances/{instance_size}.sol")
+# instance, solution = cvrplib.download(dataset,solution=True)
+distances = instance.get('edge_weight').tolist()
+trucks = instance.get('name').partition("k")[2]
 
 # Set the maximum sum of cluster points
-capacity = instance.capacity
-coords_original = [coordinates for coordinates in instance.coordinates]
-depot = instance.coordinates[0]
-demands = [demand for demand in instance.demands]
+capacity = instance.get("capacity")
+coords_original = [coordinates for coordinates in instance.get('node_coord')]
+depot = instance.get('node_coord')[0]
+demands = instance.get('demand').tolist()
 
 # Define the number of clusters
 k = int(trucks)
@@ -150,7 +160,7 @@ def node_assign(preferences):
     centroid[1] = centroid[0] / len(nodes)
 
     cluster_info['centroid'] = centroid
-    cluster_info['demand'] = 100 - cluster_info['capacity']
+    cluster_info['demand'] = 100 - cluster_info.get('capacity')
     del cluster_info['capacity']
 
     sum = sum + len(cluster[1]['nodes'])

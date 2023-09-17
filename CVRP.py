@@ -6,7 +6,7 @@ from itertools import chain, combinations
 
 import time
 import random
-import cvrplib
+import vrplib
 import csv
 import json
 import os
@@ -35,8 +35,9 @@ ccp_output = open("./csv_files/ccp_output.csv",)
 
 input = json.load(ccp_output)
 
-
-cvrp_instance, solution = cvrplib.download(dataset,solution=True)
+instance_size = os.getenv('INST_SIZE')
+cvrp_instance = vrplib.read_instance(f"./data_instances/{instance_size}.vrp")
+solution = vrplib.read_solution(f"./solution_instances/{instance_size}.sol")
 
 instance = ret_instance(input,cvrp_instance)
 
@@ -45,6 +46,7 @@ strp=instance.name.partition("k")[2]
 p=int(strp)#Number of trucks
 distances=instance.distances
 node_list = list(range(1, n))
+
 
 # Helper functions
 

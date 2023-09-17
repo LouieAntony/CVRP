@@ -6,7 +6,7 @@ from itertools import chain, combinations
 
 import time
 import random
-import cvrplib
+import vrplib
 import csv
 import os
 import json
@@ -30,15 +30,18 @@ with open(csv_filename) as f:
     reader = csv.reader(f)
     centroid_paths = list(line for line in reader)
 node_list = [list(map(int, lst)) for lst in centroid_paths]
-
-instance, solution = cvrplib.download(dataset,solution=True)
+instance_size = os.getenv('INST_SIZE')
+instance = vrplib.read_instance(f"./data_instances/{instance_size}.vrp")
+solution = vrplib.read_solution(f"./solution_instances/{instance_size}.sol")
 
 def TSP(node_list):
-    instance, solution = cvrplib.download(dataset,solution=True)
+    instance_size = os.getenv('INST_SIZE')
+    instance = vrplib.read_instance(f"./data_instances/{instance_size}.vrp")
+    solution = vrplib.read_solution(f"./solution_instances/{instance_size}.sol")
     n=len(node_list)
     # strp=instance.name.partition("k")[2]
     p=1#Number of trucks
-    distances=instance.distances
+    distances=instance.get('edge_weight').tolist()
 
     node_list = np.array(node_list)
 
@@ -181,8 +184,8 @@ def TSP(node_list):
 
     print("\nTotal cost:\t",total_cost)
 
-    print("\nClassical Solution Route\t",solution.routes)
-    print("\nClassical Solution Total cost:\t",solution.cost)
+    print("\nClassical Solution Route\t",solution.get("routes"))
+    print("\nClassical Solution Total cost:\t",solution.get("cost"))
     return (total_cost,for_graph)
 
 paths = []
@@ -203,10 +206,11 @@ def get_sub_nodes(lis):
         i+=t
     return list(i)
 
+coords = [coordinates for coordinates in instance.get('node_coord')]
 
 G = nx.Graph()
-for i in range(len(instance.coordinates)):
-    G.add_node(i,pos=tuple(instance.coordinates[i]))
+for i in range(len(coords)):
+    G.add_node(i,pos=tuple(coords[i]))
 for l in paths:
     G.add_edges_from(l)
 
